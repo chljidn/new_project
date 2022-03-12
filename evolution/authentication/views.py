@@ -42,6 +42,8 @@ class sign_up(viewsets.ModelViewSet):
 
     # @action(detail=False, methods=[''])
     # def logout(self, request):
+    #
+    #
 
 
 
