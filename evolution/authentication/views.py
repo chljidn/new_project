@@ -44,6 +44,4 @@ class sign_up(viewsets.ModelViewSet):
     # def logout(self, request):
     #
     #
-
-
-
+    # 수정
