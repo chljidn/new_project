@@ -45,3 +45,5 @@ class sign_up(viewsets.ModelViewSet):
     #
     #
     # 수정
+
+    
