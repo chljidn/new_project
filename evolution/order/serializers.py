@@ -5,8 +5,8 @@ from order.models import basket
 
 
 class basket_serializer(serializers.ModelSerializer):
-    username = serializers.StringRelatedField(user_serializer)
-    product_id = serializers.StringRelatedField(product_serializer)
+    username = serializers.StringRelatedField()
+    product_id = serializers.StringRelatedField()
     class Meta:
         model = basket
         fields = ('basket_id', 'username', 'product_id', 'count')

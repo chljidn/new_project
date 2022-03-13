@@ -4,7 +4,7 @@ from restaurant.models import product
 # Create your models here.
 
 class basket(models.Model):
-    basket_id = models.IntegerField(primary_key=True)
+    basket_id = models.AutoField(primary_key=True)
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     product_id = models.ForeignKey(product, on_delete=models.CASCADE)
     count = models.IntegerField()
