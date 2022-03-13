@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 import sys
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
@@ -39,11 +39,11 @@ class sign_up(viewsets.ModelViewSet):
             auth_user = authenticate(username=request.data['username'], password=request.data['password'])
             login(request, auth_user)
             return Response(status=status.HTTP_200_OK)
+        else:
+            return Response({'message': '패스워드가 일치하지 않습니다.'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    # @action(detail=False, methods=[''])
-    # def logout(self, request):
-    #
-    #
-    # 수정
-
-    
+    @action(detail=False, methods=['post'])
+    def logout(self, request):
+        if request.user.is_authenticated:
+            logout(request)
+            return Response({'로그아웃 되었습니다.'}, status=status.HTTP_200_OK)
