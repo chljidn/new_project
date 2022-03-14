@@ -6,7 +6,7 @@ from restaurant.models import product
 class basket(models.Model):
     basket_id = models.AutoField(primary_key=True)
     username = models.ForeignKey(User, on_delete=models.CASCADE)
-    product_id = models.ForeignKey(product, on_delete=models.CASCADE)
+    product_id = models.ForeignKey(product, on_delete=models.CASCADE, db_column="product_id")
     count = models.IntegerField()
 
 class order(models.Model):
