@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'order.apps.OrderConfig',
     'restaurant.apps.RestaurantConfig',
     'rest_framework',
+    'django_extensions',
 ]
 
 
@@ -53,6 +54,7 @@ DATABASES = {
         "PASSWORD": "kic12",
         "HOST": "127.0.0.1",
         "PORT": "3306",
+        "TEST": {"NAME" : "testDB"}
     }
 }
 
