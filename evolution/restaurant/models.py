@@ -26,7 +26,7 @@ class restaurant(models.Model):
 # 상품
 class product(models.Model):
     product_id = models.IntegerField(primary_key=True)
-    restaurant_id = models.ForeignKey(restaurant, on_delete=models.CASCADE)
+    restaurant_id = models.ForeignKey(restaurant, on_delete=models.CASCADE, db_column="restaurant_id")
     product_name = models.TextField(default="")
     price = models.IntegerField()
     category = models.CharField(max_length=50)
