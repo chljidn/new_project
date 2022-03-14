@@ -9,12 +9,12 @@ from rest_framework.decorators import action
 import sys
 from django.contrib.auth import authenticate, login, logout
 
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-
 class sign_up(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = user_serializer
 
+    # get_object 재정의 요망
+    # 회원가입
     def create(self, request):
         user_id = request.data['username']
         user_password = request.data['password']
@@ -32,7 +32,8 @@ class sign_up(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # 기본적인 django session login 활용
-    @action(detail=False, methods=['post'], authentication_classes=[SessionAuthentication, BasicAuthentication])
+    # 로그인
+    @action(detail=False, methods=['post'])
     def login(self, request):
         user = self.queryset.get(username=request.data['username'])
         if check_password(request.data['password'], user.password):
@@ -42,8 +43,23 @@ class sign_up(viewsets.ModelViewSet):
         else:
             return Response({'message': '패스워드가 일치하지 않습니다.'}, status=status.HTTP_401_UNAUTHORIZED)
 
+    # 로그아웃
     @action(detail=False, methods=['post'])
     def logout(self, request):
         if request.user.is_authenticated:
             logout(request)
             return Response({'로그아웃 되었습니다.'}, status=status.HTTP_200_OK)
+
+    # url에 pk 문제로 데코레이터 사용. 수정 요망.
+    # 회원탈퇴
+    @action(detail=False, methods=['delete'])
+    def withdrawal(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            user = self.queryset.get(username=request.user)
+            if check_password(request.data['password'], user.password):
+                logout(request)
+                self.perform_destroy(user)
+                return Response({'message':'정상적으로 탈퇴되었습니다.'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': '패스워드가 일치하지 않습니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+
