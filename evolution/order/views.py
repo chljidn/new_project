@@ -2,7 +2,7 @@ from order.models import basket as basket_model, order, order_detail
 from restaurant.models import product
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from order.serializers import basket_serializer
+from order.serializers import basket_serializer, order_serializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
@@ -61,14 +61,19 @@ class basket(viewsets.ViewSet):
         pass
 
 # 내 주문 목록(해당 유저의 모든 주문 목록 리스트)
-# 해당 주문의 상세 내역(해당 유저의 해당 주문의 상세 내역) < = 이 부분은 주문 상세로 가야 할 듯?
-# 결제 기능 추가해야 하므로 뒤로 미룸
+# 주문 상세 추가에서 연산 줄일 수 있도록 수정 요망
+#
 class order_view(viewsets.ViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
+    queryset = order.objects.all()
 
-    def list(self):
-        pass
+    # 전체 데이터가 아닌 해당 유저의 데이터만 포함하므로 수정 요망
+    def list(self, request):
+        order_list = self.queryset.filter(username_id=request.user)
+        serializer = order_serializer(order_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
+    # 중복 체크 필요한가?
     def create(self, request):
         if request.user.is_authenticated:
             now = timezone.now()
