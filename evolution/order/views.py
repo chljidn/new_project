@@ -83,8 +83,10 @@ class order_view(viewsets.ViewSet):
             for detail in request.data['my_order_list']:
                 # 추후 수정 요망
                 product_object = product.objects.get(product_id=detail['product_id'])
-                user_order.order_detail_set.c망reate(product_id=product_object, count=detail['count'])
+                user_order.order_detail_set.create(product_id=product_object, count=detail['count'])
             return Response(status=status.HTTP_200_OK )
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     def delete(self, request):
         pass
