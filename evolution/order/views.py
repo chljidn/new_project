@@ -1,4 +1,4 @@
-from order.models import basket as basket_model, order
+from order.models import basket as basket_model, order, order_detail
 from restaurant.models import product
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -6,6 +6,8 @@ from order.serializers import basket_serializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
+from django.utils import timezone
+from datetime import timedelta
 
 # Create your views here.
 # 장바구니
@@ -63,8 +65,26 @@ class basket(viewsets.ViewSet):
 # 결제 기능 추가해야 하므로 뒤로 미룸
 class order_view(viewsets.ViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-    def create(self, request):
+
+    def list(self):
         pass
+
+    def create(self, request):
+        if request.user.is_authenticated:
+            now = timezone.now()
+            user_order = order.objects.create(
+                username = request.user,
+                # order_address =
+                order_time=now,
+                prediction_time=now+timedelta(minutes=int(request.data['prediction_time']))
+            )
+
+            # 해당 주문 아이디에 따른 주문 상세 목록 추가
+            for detail in request.data['my_order_list']:
+                # 추후 수정 요망
+                product_object = product.objects.get(product_id=detail['product_id'])
+                user_order.order_detail_set.c망reate(product_id=product_object, count=detail['count'])
+            return Response(status=status.HTTP_200_OK )
 
     def delete(self, request):
         pass
