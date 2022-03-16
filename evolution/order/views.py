@@ -62,7 +62,7 @@ class basket(viewsets.ViewSet):
 
 # 내 주문 목록(해당 유저의 모든 주문 목록 리스트)
 # 주문 상세 추가에서 연산 줄일 수 있도록 수정 요망
-#
+# 결제 기능 추가 요망
 class order_view(viewsets.ViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     queryset = order.objects.all()
@@ -85,11 +85,14 @@ class order_view(viewsets.ViewSet):
             )
 
             # 해당 주문 아이디에 따른 주문 상세 목록 추가
-            for detail in request.data['my_order_list']:
-                # 추후 수정 요망
-                product_object = product.objects.get(product_id=detail['product_id'])
-                user_order.order_detail_set.create(product_id=product_object, count=detail['count'])
-            return Response(status=status.HTTP_200_OK )
+            if request.data['my_order_list'] != []:
+                for detail in request.data['my_order_list']:
+                    # 추후 수정 요망
+                    product_object = product.objects.get(product_id=detail['product_id'])
+                    user_order.order_detail_set.create(product_id=product_object, count=detail['count'])
+                return Response(status=status.HTTP_200_OK )
+            else:
+                return Response('주문할 상품이 없습니다. 주문내역을 확인해주세요.', status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
