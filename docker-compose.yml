@@ -1,0 +1,12 @@
+version: '3'
+services:
+        gunicorn:
+                build: ./evolution
+                container_name: gunicorn
+                image: chljidn/evolution:${TAG:-evolution}
+                #restart: always
+                working_dir: /srv/evolution_project
+                command: /bin/bash
+                command: gunicorn --bind 0.0.0.0:8000 evolution.wsgi:application
+                network_mode: "host"
+              
