@@ -10,7 +10,7 @@ pipeline {
 	
 		stage('Docker-build') {
 			steps {
-				sh 'docker build chljidn/evolution:evolution'				
+				sh 'docker build . -t chljidn/evolution:evolution'				
 			}
 			
 		}
