@@ -3,7 +3,7 @@ pipeline {
 	stages {
 		stage('Test') {
 			steps {
-				bash 'ls -l' && 'cd evolution' && 'ls -l'
+				sh 'ls -l' && 'cd evolution' && 'ls -l'
 			}	
 		}
 	}
