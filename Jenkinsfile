@@ -3,14 +3,14 @@ pipeline {
 	stages {
 		stage('Test') {
 			steps {
-				sh '''ls -l  && cd evolution && python3 manage.py test && cd ..'''
+				sh '''ls -l  && cd evolution && python3 manage.py test'''
 			}	
 		}
 	
 	
-		stage('Docker-compose') {
+		stage('Docker-build') {
 			steps {
-				sh 'docker-compose build'				
+				sh 'docker build chljidn/evolution:evolution'				
 			}
 			
 		}
