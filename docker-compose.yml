@@ -6,7 +6,11 @@ services:
                 image: chljidn/evolution:${TAG:-evolution}
                 #restart: always
                 working_dir: /srv/evolution_project
-                command: /bin/bash
-                command: gunicorn --bind 0.0.0.0:8000 evolution.wsgi:application
+                # command: /bin/bash
+                # command: python manage.py makemigrations\ && python manage.py migrate\ && gunicorn --bind 0.0.0.0:8000 evolution.wsgi:application
+                command: > 
+                        bash -c "python manage.py makemigrations 
+                        && python manage.py migrate 
+                        && gunicorn --bind 0.0.0.0:8000 evolution.wsgi:application"
                 network_mode: "host"
               

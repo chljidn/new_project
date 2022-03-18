@@ -1,6 +1,10 @@
 from rest_framework import serializers
-from restaurant.models import restaurant, product
+from restaurant.models import restaurant, product, owner
 
+class owner_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = owner
+        fields = ('username', 'phone_number', 'email')
 
 class restaurant_serializer(serializers.ModelSerializer):
     class Meta:

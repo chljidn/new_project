@@ -2,9 +2,9 @@ from django.db import models
 from authentication.models import User
 # 업체 소유주
 class owner(models.Model):
-    username = models.CharField(max_length=50)
+    ownername = models.CharField(max_length=50)
     password = models.CharField(max_length=200)
-    phone_number = models.IntegerField()
+    phone_number = models.CharField(max_length=15)
     email = models.EmailField()
 
 # 업체 주소
