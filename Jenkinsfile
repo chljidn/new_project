@@ -6,9 +6,17 @@ pipeline {
 				sh '''ls -l  && cd evolution && python3 manage.py test'''
 			}	
 		}
+		stage('Docker-build') {
+			sh 'cd evolution'
+			app = docker.build('chljidn/evolution:evolution')
+		}
 		stage('Docker-push') {
 			steps {
-				app = docker.withRegistry('https://hub.docker.com/repository/docker/chljidn/evolution','docker_hub')
+				docker.withRegistry('https://registry.hub.docker.com', 'docker_hub') {
+				app.push('${env.BUILD_NUMBER}')
+				app.push('letest')	
+
+				}
 			}
 		}
 	}
