@@ -1,5 +1,8 @@
 pipeline {
 	agent any
+	environment {
+		DOCKER_HUB_ID = credentials('chljidn')
+	}
 	stages {
 		stage('Test') {
 			steps {
@@ -8,7 +11,7 @@ pipeline {
 		}
 		stage('Docker-push') {
 			steps {
-				sh echo credentials('docker-hub')
+				sh echo $DOCKER_HUB_ID
 			}
 		}
 	}
