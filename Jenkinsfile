@@ -12,7 +12,7 @@ pipeline {
 		}
 		stage('Docker-build') {
 			steps {
-				sh 'echo $DOCKER_HUB_USR && ehco $DOCKER_HUB_PSW'
+				sh 'echo $DOCKER_HUB_USR && echo $DOCKER_HUB_PSW'
 			}
 		}
 	}
