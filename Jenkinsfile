@@ -6,9 +6,11 @@ pipeline {
 				sh '''ls -l  && cd evolution && python3 manage.py test'''
 			}	
 		}
+		stage('
+		
 		stage('Docker-push') {
 			steps {
-				sh echo $DOCKER_HUB
+				sh echo credentials('docker-hub')
 			}
 		}
 	}
