@@ -25,6 +25,11 @@ pipeline {
 				sh 'docker push chljidn/evolution:evolution'
 			}
 		}
+		stage('Docker-rmi') {
+			steps {
+				sh 'docker rmi chljidn/evolution:evolution'
+			}
+		} 
 	}
 }
 
