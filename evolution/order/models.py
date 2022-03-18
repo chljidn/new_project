@@ -5,13 +5,13 @@ from django.utils import timezone
 
 class basket(models.Model):
     basket_id = models.AutoField(primary_key=True)
-    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column='username')
     product_id = models.ForeignKey(product, on_delete=models.CASCADE, db_column="product_id")
     count = models.IntegerField()
 
 class order(models.Model):
     order_id = models.AutoField(primary_key=True)
-    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     order_time = models.DateTimeField()
     prediction_time = models.DateTimeField()
 
