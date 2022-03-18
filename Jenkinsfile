@@ -8,8 +8,7 @@ pipeline {
 		}
 		stage('Docker-push') {
 			steps {
-				sh echo 'docker_hub'
-				app = docker.withRegistry('https://registry.hub.docker.com','docker_hub')
+				app = docker.withRegistry('https://hub.docker.com/repository/docker/chljidn/evolution','docker_hub')
 			}
 		}
 	}
