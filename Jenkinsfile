@@ -7,7 +7,9 @@ pipeline {
 			}	
 		}
 		stage('Docker-build') {
-			sh 'cd evolution'
+			steps {
+				sh 'cd evolution'
+			}
 			app = docker.build('chljidn/evolution')
 		}
 		stage('Docker-push') {
