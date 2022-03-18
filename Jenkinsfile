@@ -10,7 +10,7 @@ pipeline {
 	
 		stage('Docker-build') {
 			steps {
-				sh 'cd evolution && docker build . --network host -t chljidn/evolution:evolution'
+				sh 'cd evolution && docker build . -t chljidn/evolution:evolution'
 			}
 			
 		}
