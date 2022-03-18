@@ -1,5 +1,9 @@
 node {
+
 	agent any
+	environment {
+		DOCKER_HUB=credentials('docker_hub')
+	}
 	stages {
 		stage('Test') {
 			steps {
@@ -8,17 +12,7 @@ node {
 		}
 		stage('Docker-build') {
 			steps {
-				sh 'cd evolution'
-			}
-			app = docker.build('chljidn/evolution')
-		}
-		stage('Docker-push') {
-			steps {
-				docker.withRegistry('https://registry.hub.docker.com', 'docker_hub') {
-				app.push('${env.BUILD_NUMBER}')
-				app.push('letest')	
-
-				}
+				sh 'echo $DOCKER_HUB_USR && ehco $DOCKER_HUB_PSW'
 			}
 		}
 	}
