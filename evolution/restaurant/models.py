@@ -13,11 +13,11 @@ class owner(models.Model):
 
 # 업체
 class restaurant(models.Model):
-    restaurant_id = models.IntegerField(primary_key=True)
-    owner_id = models.ForeignKey(owner, on_delete=models.CASCADE)
+    restaurant_id = models.AutoField(primary_key=True)
+    owner_id = models.ForeignKey(owner, on_delete=models.CASCADE, db_column='owner_id')
     restaurant_name = models.CharField(max_length=100)
     # restaurant_address = models.ForeignKey(restaurant_address, on_delete=models.PROTECT)
-    phon_number = models.IntegerField()
+    phone_number = models.CharField(max_length=20)
     category = models.CharField(max_length=50)
 
     def __str__(self):
@@ -25,12 +25,12 @@ class restaurant(models.Model):
 
 # 상품
 class product(models.Model):
-    product_id = models.IntegerField(primary_key=True)
+    product_id = models.AutoField(primary_key=True)
     restaurant_id = models.ForeignKey(restaurant, on_delete=models.CASCADE, db_column="restaurant_id")
     product_name = models.TextField(default="")
     price = models.IntegerField()
     category = models.CharField(max_length=50)
-    image = models.IntegerField()
+    image = models.IntegerField(null=True)
     content = models.TextField(default="")
 
     def __str__(self):
