@@ -11,7 +11,7 @@ pipeline {
 		}
 		stage('Docker-push') {
 			steps {
-				sh echo ${env.DOCKER_HUB_ID}
+				sh 'echo $DOCKER_HUB_ID'
 			}
 		}
 	}
