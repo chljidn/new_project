@@ -28,9 +28,10 @@ class test_auth_request(APITestCase):
         self.assertEqual(response.status_code, 201)
 
     def test_login(self):
-        client = APIClient()
+        # response = self.client.login(username="setup", password="setup1234")
+        # self.assertEqual(response, True)
         login_url = reverse('authentication:signup-login')
-        response = client.post(login_url,{
+        response = self.client.post(login_url,{
             "username":"setup",
             "password":"setup1234"
         }, format='json')
@@ -46,8 +47,7 @@ class test_auth_request(APITestCase):
         }, format='json')
         session_id = re.findall("=(.+?);", str(response.cookies['sessionid']))[0]
         logout_url = reverse('authentication:signup-logout')
-        response = self.client.post(logout_url,
-                                    headers={'sessionid': session_id})
+        response = self.client.post(logout_url)
         self.assertEqual(response.status_code, 200)
 
 
