@@ -6,6 +6,6 @@
 - Mariadb
 - jenkins
 - AWS(EC2)
-- Gunicorn(예정)
+- Gunicorn
 - Docker
 
