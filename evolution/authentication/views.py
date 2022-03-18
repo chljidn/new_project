@@ -6,10 +6,11 @@ from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 import sys
 from django.contrib.auth import authenticate, login, logout
 
-class sign_up(viewsets.ModelViewSet):
+class user_auth(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = user_serializer
 
