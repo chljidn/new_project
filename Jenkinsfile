@@ -6,13 +6,10 @@ pipeline {
 				sh '''ls -l  && cd evolution && python3 manage.py test'''
 			}	
 		}
-	
-	
-		stage('Docker-build') {
+		stage('Docker-push') {
 			steps {
-				sh 'cd evolution && docker build . -t chljidn/evolution:evolution'
+				sh echo $DOCKER_HUB
 			}
-			
 		}
 	}
 }
