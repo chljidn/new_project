@@ -1,8 +1,5 @@
 pipeline {
 	agent any
-	environment {
-		DOCKER_HUB_ID = credentials('docker_hub-username')
-	}
 	stages {
 		stage('Test') {
 			steps {
@@ -11,7 +8,8 @@ pipeline {
 		}
 		stage('Docker-push') {
 			steps {
-				sh 'echo $DOCKER_HUB_ID'
+				sh echo 'docker_hub'
+				app = docker.withRegistry('https://registry.hub.docker.com','docker_hub')
 			}
 		}
 	}
