@@ -8,10 +8,8 @@ from rest_framework import status
 from rest_framework.decorators import action
 from django.utils import timezone
 from datetime import timedelta
-from rest_framework.parsers import JSONParser
 
-# Create your views here.
-# 장바구니
+
 class basket(viewsets.ViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     queryset = basket_model.objects.all()
@@ -21,8 +19,8 @@ class basket(viewsets.ViewSet):
     # 이런식으로 구성해도 될까?
     def retrieve(self, request, pk=None):
         if request.user.is_authenticated:
-            list = self.queryset.filter(user_id=pk)
-            serializer = basket_serializer(list, many=True)
+            my_basket = self.queryset.filter(user_id=pk)
+            serializer = basket_serializer(my_basket, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({'message':"로그인이 필요합니다."}, status=status.HTTP_200_OK)
 
@@ -35,6 +33,7 @@ class basket(viewsets.ViewSet):
 
     # 여러 객체가 들어올 경우로 수정 요망
     # ex) {basket : {product_id:1, count:1}, {상품번호 : 3, 수량:2}}
+    # 해당 장바구니 객체가 존재하고, 수량이 0이면 삭제시켜야 함. 추가 요망.
     def create(self, request):
         if request.user.is_authenticated:
             my_basket = basket_model.objects.filter(user_id=request.user) # get_queryset으로 변경 예정
@@ -51,26 +50,28 @@ class basket(viewsets.ViewSet):
                         count=detail['count']
                     )
                 serializer = basket_serializer(my_basket, many=True)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         else:
             return Response({"message": "로그인이 필요한 기능입니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
-    def update(self, request, pk=None):
-        if request.user.is_authenticated:
-            my_basket = self.queryset.filter(user_id=request.user, product_id=request.data['product'])
-            my_basket.update(
-                user_id=request.user,
-                product_id=request.data['product'],
-                count = request.data['count']
-            )
-            serializer = basket_serializer(my_basket, many=True)
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
+    # def update(self, request, pk=None):
+    #     if request.user.is_authenticated:
+    #         my_basket = self.queryset.filter(user_id=request.user, product_id=request.data['product'])
+    #         my_basket.update(
+    #             user_id=request.user,
+    #             product_id=request.data['product'],
+    #             count = request.data['count']
+    #         )
+    #         serializer = basket_serializer(my_basket, many=True)
+    #         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+    #     return Response({'message':'로그인이 필요합니다.'}, status=status.HTTP_401_UNAUTHORIZED)
 
     # delete이기 때문에 파라미터에 각 삭제할 상품의 아이디를 보내도 되지 않을까...
+    # 해당 유저에 대한 장바구니 비우기 기능으로 할까?
     @action(detail=False, methods=['delete'])
     def delete(self, request):
-        print(request.data.keys())
         if request.user.is_authenticated:
             my_basket = self.queryset.filter(user_id=request.user, basket_id__in=request.data['basket_id'])
             my_basket.delete()
@@ -99,7 +100,6 @@ class order_view(viewsets.ModelViewSet):
             now = timezone.now()
             user_order = order.objects.create(
                 user_id = request.user,
-                # order_address =
                 order_time=now,
                 prediction_time=now+timedelta(minutes=int(request.data['prediction_time']))
             )
