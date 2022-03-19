@@ -22,17 +22,24 @@ class test_basket_request(APITestCase):
         cls.login_client = APIClient()
         cls.login_client.login(username='user', password='user1234')
 
-    def test_basket_create_or_update(self):
+    def test_basket_create(self):
         basket_url = reverse('order:basket-list')
-        # 추가
-        response = self.login_client.post(basket_url, {"basket_list": [{"product": 1, "count": 1}, {"product": 3, "count": 1}]}, format='json')
-        self.assertEqual(response.status_code, 200)
-        response = self.login_client.post(basket_url, {"basket_list": [{"product": 1, "count": 3}]}, format='json')
+        response = self.login_client.post(basket_url, {'product_id':1, 'count':2}, format='json')
+        self.assertEqual(response.status_code, 201)
+
+    def test_basket_partial_update(self):
+        basket_url = reverse('order:basket-detail', kwargs={'pk':1})
+        response = self.login_client.patch(basket_url, {'count':3})
         self.assertEqual(response.status_code, 200)
 
-    # 추후에 수정 요망.
-    def test_basket_delete(self):
-        basket_url = reverse('order:basket-delete')
-        response = self.login_client.delete(basket_url, {"basket_id":[2]})
-        self.assertEqual(response.status_code, 200)
+    def test_basket_destroy(self):
+        basket_url = reverse('order:basket-detail', kwargs={'pk':1})
+        response = self.login_client.delete(basket_url)
+        self.assertEqual(response.status_code, 204)
+
+    # # 추후에 수정 요망.
+    # def test_basket_delete(self):
+    #     basket_url = reverse('order:basket-delete')
+    #     response = self.login_client.delete(basket_url, {"basket_id":[2]})
+    #     self.assertEqual(response.status_code, 200)
 
