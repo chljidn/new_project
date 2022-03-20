@@ -22,6 +22,16 @@ class test_basket_request(APITestCase):
         cls.login_client = APIClient()
         cls.login_client.login(username='user', password='user1234')
 
+    def test_basket_list(self):
+        basket_url = reverse('order:basket-list')
+        response = self.login_client.get(basket_url)
+        self.assertEqual(response.status_code, 401)
+
+    def test_basekt_retrieve(self):
+        basket_url = reverse('order:basket-detail', kwargs={'pk':1})
+        response = self.login_client.get(basket_url)
+        self.assertEqual(response.status_code, 200)
+
     def test_basket_create(self):
         basket_url = reverse('order:basket-list')
         response = self.login_client.post(basket_url, {'product_id':1, 'count':2}, format='json')
@@ -37,9 +47,9 @@ class test_basket_request(APITestCase):
         response = self.login_client.delete(basket_url)
         self.assertEqual(response.status_code, 204)
 
-    # # 추후에 수정 요망.
-    # def test_basket_delete(self):
-    #     basket_url = reverse('order:basket-delete')
-    #     response = self.login_client.delete(basket_url, {"basket_id":[2]})
-    #     self.assertEqual(response.status_code, 200)
+class test_order_request(APITestCase):
+    def test_order_get(self):
+        pass
 
+    def test_order_post(self):
+        pass
