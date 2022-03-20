@@ -61,5 +61,6 @@ class user_auth(viewsets.ModelViewSet):
                 logout(request)
                 self.perform_destroy(user)
                 return Response({'message':'정상적으로 탈퇴되었습니다.'}, status=status.HTTP_200_OK)
-            return Response({'message': '패스워드가 일치하지 않습니다.'}, status=status.HTTP_401_UNAUTHORIZED)
-
+            else:
+                return Response({'message': '패스워드가 일치하지 않습니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
