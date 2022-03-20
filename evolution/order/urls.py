@@ -6,8 +6,8 @@ app_name = "order"
 
 router= DefaultRouter()
 router.register('basket', order_views.basket, basename='basket')
-router.register('my_order', order_views.order_view, basename='my_order')
-
 urlpatterns = [
+    path('my_order/', order_views.order_view.as_view()),
+    # path('my_order/<int:pk>/', order_views.order_view.as_view()),
     path('', include(router.urls))
 ]
