@@ -1,22 +1,34 @@
+import django_filters.rest_framework
+
 from order.models import basket as basket_model, order, order_detail
 from restaurant.models import product
 from rest_framework import viewsets
+from rest_framework import generics
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from order.serializers import basket_serializer, order_serializer
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from datetime import timedelta
-
+from rest_framework.filters import BaseFilterBackend
+from rest_framework import mixins
+import json
 
 class basket(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     queryset = basket_model.objects.all()
     # lookup_field='username'
 
-    # 문제는 해당 요청의 Pk는 장바구니 번호가 아니라 유저의 Pk라는 것.
-    # 이런식으로 구성해도 될까?
+    # 해당 유저에 해당하는 쿼리셋 객체들만 가져옴
+    # def filter_queryset(self, request, queryset):
+    #     return queryset.filter(user_id=request.user)
+
+    def list(self, request):
+        if request.user.is_staff:
+            return Response(basket_serializer(self.queryset).data, status=status.HTTP_200_OK)
+        return Response({'message': '일반회원은 사용할 수 없는 기능입니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+
     def retrieve(self, request, pk=None):
         if request.user.is_authenticated:
             my_basket = self.queryset.filter(user_id=pk)
@@ -39,60 +51,45 @@ class basket(viewsets.ModelViewSet):
     def partial_update(self, request, pk):
         if request.user.is_authenticated:
             basket_object = self.get_object()
-            print(basket_object)
             basket_object.count = request.data['count']
             basket_object.save()
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-
-    # delete이기 때문에 파라미터에 각 삭제할 상품의 아이디를 보내도 되지 않을까...
-    # 해당 유저에 대한 장바구니 비우기 기능으로 할까?
-    # def delete(self, request, pk):
-    #     if request.user.is_authenticated:
-    #         my_basket = self.queryset.filter(user_id=request.user, basket_id__in=request.data['basket_id'])
-    #         my_basket.delete()
-    #         return Response({'message': '목록이 삭제되었습니다.'}, status=status.HTTP_200_OK)
-    #     return Response({'message': '로그인이 필요합니다.'}, status=status.HTTP_401_UNAUTHORIZED)
-
-
-# 내 주문 목록(해당 유저의 모든 주문 목록 리스트)
-# 주문 상세 추가에서 연산 줄일 수 있도록 수정 요망
-# 결제 기능 추가 요망
-class order_view(viewsets.ModelViewSet):
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+# 해당 유저의 주문 목록, 주문 생성
+# request.data : prediction_time = 현재 시각부터 배달까지 걸리는 예상 시간(분 단위)
+#                product_list = 주문 목록에 들어있는 상품들의 아이디(Pk) 리스트(배열)
+#                               [[pk, count],[pk,count]] 형식
+class order_view(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = order.objects.all()
+    serializer_class = order_serializer
+    permission_classes = [IsAuthenticated]
 
-    # 전체 데이터가 아닌 해당 유저의 데이터만 포함하므로 수정 요망
-    def list(self, request):
-        order_list = self.queryset.filter(user_id=request.user)
-        serializer = order_serializer(order_list, many=True)
+    def get(self, request, *args, **kwargs):
+        my_order_filter = self.queryset.filter(user_id=request.user)
+        serializer = order_serializer(my_order_filter, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def retrieve(self, request, *args, **kwargs):
-        pass
+    def post(self, request, *args, **kwargs):
+        now = timezone.now()
+        user_order = order.objects.create(
+            user_id = request.user,
+            order_time=now,
+            prediction_time=now+timedelta(minutes=int(request.data['prediction_time']))
+        )
 
-    # 중복 체크 필요한가?
-    def create(self, request):
-        if request.user.is_authenticated:
-            now = timezone.now()
-            user_order = order.objects.create(
-                user_id = request.user,
-                order_time=now,
-                prediction_time=now+timedelta(minutes=int(request.data['prediction_time']))
-            )
+        # 해당 주문 아이디에 따른 주문 상세 목록 추가
+        request_data= json.loads(request.data['product_list'])
+        product_id = list(map(lambda x: x[0], request_data))
+        product_count = list(map(lambda x: x[1], request_data))
+        bulk_order = []
+        product_list = product.objects.filter(product_id__in=product_id)
 
-            # 해당 주문 아이디에 따른 주문 상세 목록 추가
-            if request.data['my_order_list'] != []:
-                for detail in request.data['my_order_list']:
-                    # 추후 수정 요망
-                    product_object = product.objects.get(product_id=detail['product_id'])
-                    user_order.order_detail_set.create(product_id=product_object, count=detail['count'])
-                return Response(status=status.HTTP_200_OK )
-            else:
-                return Response('주문할 상품이 없습니다. 주문내역을 확인해주세요.', status=status.HTTP_400_BAD_REQUEST)
+        if product_list:
+            for order_product, order_count in zip(product_list, product_count): # 실질적인 쿼리셋이 도는 구간
+                bulk_order.append(order_detail(order_id=user_order, product_id=order_product, count=order_count))
+
+            user_order.order_detail_set.bulk_create(bulk_order)
+            return Response(status=status.HTTP_200_OK )
         else:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-    def delete(self, request):
-        pass
+            return Response('주문할 상품이 없습니다. 주문내역을 확인해주세요.', status=status.HTTP_400_BAD_REQUEST)
