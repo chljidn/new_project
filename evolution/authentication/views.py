@@ -47,7 +47,7 @@ class user_auth(viewsets.ModelViewSet):
     def logout(self, request):
         if request.user.is_authenticated:
             logout(request)
-            return Response({'로그아웃 되었습니다.'}, status=status.HTTP_200_OK)
+            return Response({'message':'로그아웃 되었습니다.'}, status=status.HTTP_200_OK)
 
 
     def update(self, request, *args, **kwargs):
