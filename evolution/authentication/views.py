@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import viewsets
 from authentication.models import User
 from authentication.serializers import user_serializer
@@ -6,13 +5,12 @@ from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-import sys
 from django.contrib.auth import authenticate, login, logout
 
 class user_auth(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = user_serializer
+    lookup_field = 'username'
 
     # get_object 재정의 요망
     # 회원가입
@@ -51,16 +49,17 @@ class user_auth(viewsets.ModelViewSet):
             logout(request)
             return Response({'로그아웃 되었습니다.'}, status=status.HTTP_200_OK)
 
-    # url에 pk 문제로 데코레이터 사용. 수정 요망.
-    # 회원탈퇴
-    @action(detail=False, methods=['delete'])
-    def withdrawal(self, request, *args, **kwargs):
+
+    def update(self, request, *args, **kwargs):
+        pass
+
+    # 유저 아이디(username)를 파라미터로 받는다.
+    def destroy(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             user = self.queryset.get(username=request.user)
             if check_password(request.data['password'], user.password):
                 logout(request)
                 self.perform_destroy(user)
                 return Response({'message':'정상적으로 탈퇴되었습니다.'}, status=status.HTTP_200_OK)
-            else:
-                return Response({'message': '패스워드가 일치하지 않습니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'message': '패스워드가 일치하지 않습니다.'}, status=status.HTTP_401_UNAUTHORIZED)
 
