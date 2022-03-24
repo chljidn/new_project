@@ -15,6 +15,7 @@ ENV /bin/bash -c evolution
 WORKDIR /srv/evolution_project
 
 RUN pip install --upgrade pip
+# mysqlclient gcc가 여기서 install되기 때문에 environment.yaml의 pip 부분에 mysqlclient가 있으면 안됨.
 RUN apt-get install python3-dev default-libmysqlclient-dev gcc  -y
 RUN pip install -r requirements.txt
 
