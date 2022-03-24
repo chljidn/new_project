@@ -64,6 +64,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     sex = models.CharField(
         max_length=10,
     )
+    is_general = models.BooleanField(default=True)
+    is_owner = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=True)
