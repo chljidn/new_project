@@ -1,7 +1,7 @@
 from rest_framework.test import APITestCase, APIClient
 from order.models import basket
 from authentication.models import User
-from restaurant.models import product, restaurant, owner
+from restaurant.models import product, restaurant
 from django.urls import reverse
 
 class test_basket_request(APITestCase):
@@ -10,7 +10,7 @@ class test_basket_request(APITestCase):
     def setUpTestData(cls):
         user = User.objects.create_user(username='user', password='user1234',
                                         email='user@test.ev', birth='1980-01-01', sex='M')
-        owner_object = owner.objects.create(ownername='owner', password='owner1234', phone_number='000-0000-0000', email='owner@test.ev')
+        owner_object = User.objects.create(username='owner', password='owner1234', email='owner@test.ev', birth='1980-01-01', sex='M', is_owner=True, is_general=False)
         restaurant_object = restaurant.objects.create(restaurant_name='친정집 본점', phone_number='000-0000-0000', category='프랜차이즈', owner_id=owner_object)
         product_bulk = [product(price= 15000, category='치킨', content='맛있는 후라이드 치킨', product_name='친정집 후라이드', restaurant_id=restaurant_object),
                         product(price= 16000, category='치킨', content='맛있는 양념 치킨', product_name='친정집 양념', restaurant_id=restaurant_object),
