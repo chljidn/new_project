@@ -7,7 +7,7 @@ pipeline {
 	stages {
 		stage('Test') {
 			steps {
-				sh '''ls -l  && cd evolution && python3 manage.py test'''
+				sh '''ls -l  && cd evolution && pip install -r requirements.txt && python3 manage.py test'''
 			}	
 		}
                 stage('Docker-build') {
