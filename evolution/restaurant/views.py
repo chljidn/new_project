@@ -101,5 +101,8 @@ class restaurant_view(viewsets.ModelViewSet):
     def put(self):
         pass
 
+    def partial_update(self, request, *args, **kwargs):
+        pass
+
     def delele(self):
         pass
