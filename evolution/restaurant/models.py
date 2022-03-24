@@ -1,20 +1,14 @@
 from django.db import models
 from authentication.models import User
-# 업체 소유주
-class owner(models.Model):
-    ownername = models.CharField(max_length=50)
-    password = models.CharField(max_length=200)
-    phone_number = models.CharField(max_length=15)
-    email = models.EmailField()
+
 
 # 업체 주소
 # class restaurant_address(models.Model):
-#     pass
 
 # 업체
 class restaurant(models.Model):
     restaurant_id = models.AutoField(primary_key=True)
-    owner_id = models.ForeignKey(owner, on_delete=models.CASCADE, db_column='owner_id')
+    owner_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column='owner_id')
     restaurant_name = models.CharField(max_length=100)
     # restaurant_address = models.ForeignKey(restaurant_address, on_delete=models.PROTECT)
     phone_number = models.CharField(max_length=20)
