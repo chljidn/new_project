@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from authentication.models import User
 from authentication.serializers import user_serializer
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import check_password
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
@@ -12,20 +12,14 @@ class user_auth(viewsets.ModelViewSet):
     serializer_class = user_serializer
     lookup_field = 'username'
 
-    # get_object 재정의 요망
-    # 회원가입
     def create(self, request):
-        user_id = request.data['username']
-        user_password = request.data['password']
-        user_sex = request.data['sex']
-        user_email = request.data['email']
-        user_birth = request.data['birth']
         user = User.objects.create_user(
-            username=user_id,
-            email=user_email,
-            birth=user_birth,
-            sex=user_sex,
-            password=user_password,
+            # **request.data
+            username=request.data['username'],
+            email=request.data['email'],
+            birth=request.data['birth'],
+            sex=request.data['sex'],
+            password=request.data['password'],
         )
         serializer = user_serializer(user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -52,7 +46,8 @@ class user_auth(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         pass
-
+    def partial_update(self, request, *args, **kwargs):
+        pass
     # 유저 아이디(username)를 파라미터로 받는다.
     def destroy(self, request, *args, **kwargs):
         if request.user.is_authenticated:
