@@ -1,15 +1,19 @@
 from rest_framework import serializers
-from restaurant.models import restaurant, product, owner
-
-class owner_serializer(serializers.ModelSerializer):
-    class Meta:
-        model = owner
-        fields = ('username', 'phone_number', 'email')
+from authentication.models import User
+from restaurant.models import restaurant, product
 
 class restaurant_serializer(serializers.ModelSerializer):
     class Meta:
         model = restaurant
-        fields = ('restaurant_id')
+        fields = '__all__'
+
+class owner_serializer(serializers.ModelSerializer):
+    # restaurant_set = restaurant_serializer
+    restaurant_set = serializers.StringRelatedField(many=True)
+    # restaurant_set = restaurant_serializer(read_only=True, many=True)
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'birth', 'sex', 'restaurant_set')
 
 class product_serializer(serializers.ModelSerializer):
     restaurant_id = serializers.StringRelatedField()
