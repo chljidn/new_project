@@ -13,7 +13,6 @@ class restaurant(models.Model):
     # restaurant_address = models.ForeignKey(restaurant_address, on_delete=models.PROTECT)
     phone_number = models.CharField(max_length=20)
     category = models.CharField(max_length=50)
-
     def __str__(self):
         return self.restaurant_name
 
