@@ -98,5 +98,8 @@ class restaurant_view(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         pass
 
+    def put(self):
+        pass
+
     def delele(self):
         pass
