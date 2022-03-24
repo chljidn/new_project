@@ -20,10 +20,6 @@ class basket(viewsets.ModelViewSet):
     queryset = basket_model.objects.all()
     # lookup_field='username'
 
-    # 해당 유저에 해당하는 쿼리셋 객체들만 가져옴
-    # def filter_queryset(self, request, queryset):
-    #     return queryset.filter(user_id=request.user)
-
     def list(self, request):
         if request.user.is_staff:
             return Response(basket_serializer(self.queryset).data, status=status.HTTP_200_OK)
