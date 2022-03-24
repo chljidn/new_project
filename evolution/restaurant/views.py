@@ -92,5 +92,8 @@ class restaurant_view(viewsets.ModelViewSet):
                 category=request.data['category']
             )
 
+    def list(self):
+        pass
+
     def delele(self):
         pass
