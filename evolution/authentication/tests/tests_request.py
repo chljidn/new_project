@@ -54,5 +54,14 @@ class test_auth_request(APITestCase):
     def test_update(self):
         pass
 
-    def test_withdarawl(self):
-        pass
+    def test_destroy(self):
+        login_url = reverse('authentication:signup-login')
+        response = self.client.post(login_url, {
+            "username": "setup",
+            "password": "setup1234"
+        }, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        dt_url = reverse('authentication:signup-detail', kwargs={'username':'setup'})
+        response = self.client.delete(dt_url, {'password':'setup1234'})
+        self.assertEqual(response.status_code, 200)

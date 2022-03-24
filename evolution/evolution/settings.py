@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     'django_jenkins',
+    'django_filters',
 ]
 
 JENKINS_TASKS = (
