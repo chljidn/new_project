@@ -15,5 +15,6 @@ ENV /bin/bash -c evolution
 WORKDIR /srv/evolution_project
 
 RUN pip install --upgrade pip
+RUN apt-get install python3-dev default-libmysqlclient-dev gcc  -y
 RUN pip install -r requirements.txt
 
