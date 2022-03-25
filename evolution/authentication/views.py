@@ -6,17 +6,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from django.contrib.auth import authenticate, login, logout
-import os
-import json
-import requests
-from urllib import parse
+from address import address_api
 
 class user_auth(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = user_serializer
     lookup_field = 'username'
 
-    def create(self, request):
+    def create(self, request, **kwargs):
+
         user = User.objects.create_user(
             username=request.data['username'],
             email=request.data['email'],
@@ -24,6 +22,9 @@ class user_auth(viewsets.ModelViewSet):
             sex=request.data['sex'],
             password=request.data['password'],
         )
+        if request.data.get('address', False):
+            address_api(request.data['address'])
+
         serializer = user_serializer(user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -70,27 +71,6 @@ class user_auth(viewsets.ModelViewSet):
                 return Response({'message': '패스워드가 일치하지 않습니다.'}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-class addres_api:
 
-    url_query = {'analyze_type': 'similar', 'size': '10', 'query': '', 'page': '1'}
-    queryset = address_model.objects.all()
-
-    def create_points(self, address):
-        try:
-            self.query['query'] = '+'.join(list(map(lambda x: parse.quote(x), address.split())))
-            query_encoding = '&'.join(list(map('='.join, self.url_query.items())))
-            headers = {'Authorization': os.environ["KAKAO_API_KEY"]}
-            r = requests.get("https://dapi.kakao.com/v2/local/search/address.json?" + query_encoding, headers=headers)
-            data = json.loads(r.text)['documents'][0]
-            address_create = self.queryset.create(
-                x=data['x'],
-                y=data['y'],
-                total_address=address
-            )
-        except Exception as e:
-            print(e)
-            return False
-        else:
-            return address_create
 
 
