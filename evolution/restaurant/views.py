@@ -5,15 +5,12 @@ from rest_framework.decorators import action
 from restaurant.models import restaurant
 from authentication.models import User
 from restaurant.serializers import owner_serializer, restaurant_serializer
-from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.response import Response
 from django.contrib.auth import login, logout, authenticate
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django_filters.rest_framework import backends
 from restaurant.filters import restaurant_filter
 
-# 회원 및 사장의 가입 기능 위해 공통 기능 추상화 요망(로그인, 로그아웃)
-# 회원가입, 로그인/로그아웃 기능과 마이페이지 기능을 나눌까?
 class owner_auth_view(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = owner_serializer
@@ -53,7 +50,7 @@ class owner_auth_view(viewsets.ModelViewSet):
         return Response(status=status.HTTP_200_OK)
 
     def update(self):
-        return Response({'해당 기능은 사용할 수 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
 
     def retrieve(self, request, *args, **kwargs):
         if request.user == self.get_object():
@@ -84,17 +81,22 @@ class restaurant_view(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def create(self, request):
-        if request.user.is_owner:
+        if request.user.is_owner or request.user.IsAdminUser:
             self.queryset.create(
-                owner_id = request.user,
-                restaurant_name = request.data['restaurant_name'],
-                phone_number = request.data['phone_number'],
+                owner_id=request.user,
+                restaurant_name=request.data['restaurant_name'],
+                phone_number=request.data['phone_number'],
                 category=request.data['category']
             )
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
-    def partial_update(self, request, pk):
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+
+    def partial_update(self, request, *args, **kwargs):
         if request.user == self.get_object().owner_id or request.user.IsAdminUser:
-            super().partial_update(request, pk)
+            super().partial_update(request, *args, **kwargs)
             return Response(status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_403_FORBIDDEN)
 
