@@ -1,24 +1,19 @@
 from rest_framework import generics
-from rest_framework import viewsets
-from rest_framework import status
-from rest_framework.decorators import action
+from rest_framework import viewsets, status
 from restaurant.models import restaurant
-from authentication.models import User
 from restaurant.serializers import owner_serializer, restaurant_serializer
 from rest_framework.response import Response
 from django.contrib.auth import login, logout, authenticate
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django_filters.rest_framework import backends
 from restaurant.filters import restaurant_filter
-from authentication.views import user_auth
-from authentication.serializers import user_serializer
+from authentication.views import user_auth, User, user_serializer
 
 # 유저 view를 상속하여 create만 재정의
 class owner_auth_view(user_auth):
 
     def create(self, request):
-        user = self.queryset.create_user(
-            # **request.data
+        user = User.objects.create_user(
             username=request.data['username'],
             email=request.data['email'],
             birth=request.data['birth'],
