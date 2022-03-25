@@ -27,7 +27,7 @@ class owner_auth_view(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request):
-        owner = self.queryset.create(
+        owner = self.queryset.create_user(
             username=request.data['username'],
             password=request.data['password'],
             email=request.data['email'],
@@ -92,14 +92,14 @@ class restaurant_view(viewsets.ModelViewSet):
                 category=request.data['category']
             )
 
-    def list(self):
-        pass
+    def partial_update(self, request, pk):
+        if request.user == self.get_object().owner_id or request.user.IsAdminUser:
+            super().partial_update(request, pk)
+            return Response(status=status.HTTP_202_ACCEPTED)
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
-    def retrieve(self, request, *args, **kwargs):
-        pass
-
-    def put(self):
-        pass
-
-    def delele(self):
-        pass
+    def destroy(self, request, *args, **kwargs):
+        if request.user == self.get_object().owner_id or request.user.IsAdminUser:
+            super().destroy(request, *args, **kwargs)
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_403_FORBIDDEN)
