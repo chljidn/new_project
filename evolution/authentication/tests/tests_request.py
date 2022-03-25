@@ -6,8 +6,6 @@ import re
 
 class test_auth_request(APITestCase):
 
-    session_id = None
-
     def setUp(self):
         user = User.objects.create_user(
             username='setup',
@@ -17,7 +15,7 @@ class test_auth_request(APITestCase):
             email='setup@setup.com')
 
     def test_signup(self):
-        url = reverse('authentication:signup-list')
+        url = reverse('authentication:user-list')
         response = self.client.post(url, {
             'username':'test',
             'password':'test1234',
@@ -28,25 +26,22 @@ class test_auth_request(APITestCase):
         self.assertEqual(response.status_code, 201)
 
     def test_login(self):
-        # response = self.client.login(username="setup", password="setup1234")
-        # self.assertEqual(response, True)
-        login_url = reverse('authentication:signup-login')
+        login_url = reverse('authentication:user-login')
         response = self.client.post(login_url,{
             "username":"setup",
             "password":"setup1234"
         }, format='json')
         self.assertEqual(response.status_code, 200)
 
-        # cls.session_id = re.findall("=(.+?);", str(response.cookies['sessionid']))[0]
-
     def test_logout(self):
-        login_url = reverse('authentication:signup-login')
+        login_url = reverse('authentication:user-login')
         response = self.client.post(login_url,{
             "username":"setup",
             "password":"setup1234"
         }, format='json')
         session_id = re.findall("=(.+?);", str(response.cookies['sessionid']))[0]
-        logout_url = reverse('authentication:signup-logout')
+
+        logout_url = reverse('authentication:user-logout')
         response = self.client.post(logout_url)
         self.assertEqual(response.status_code, 200)
 
@@ -55,13 +50,13 @@ class test_auth_request(APITestCase):
         pass
 
     def test_destroy(self):
-        login_url = reverse('authentication:signup-login')
+        login_url = reverse('authentication:user-login')
         response = self.client.post(login_url, {
             "username": "setup",
             "password": "setup1234"
         }, format='json')
         self.assertEqual(response.status_code, 200)
 
-        dt_url = reverse('authentication:signup-detail', kwargs={'username':'setup'})
+        dt_url = reverse('authentication:user-detail', kwargs={'username':'setup'})
         response = self.client.delete(dt_url, {'password':'setup1234'})
         self.assertEqual(response.status_code, 200)
