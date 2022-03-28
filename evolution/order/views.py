@@ -14,6 +14,7 @@ from datetime import timedelta
 from rest_framework.filters import BaseFilterBackend
 from rest_framework import mixins
 import json
+from django.core.cache import cache
 
 class basket(viewsets.ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
@@ -86,6 +87,12 @@ class order_view(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.Ge
                 bulk_order.append(order_detail(order_id=user_order, product_id=order_product, count=order_count))
 
             user_order.order_detail_set.bulk_create(bulk_order)
+
+            # 주문번호와 해당 주문과 관계된 주문상세목록을 모두 직렬화시킨 후, redis에 저장.
+            # redis의 expire를 걸어놓거나...
+            # 주문이 완료되면 redis에서 먼저 삭제되고, 일정 기간이 지나면 데이터베이스 상에서 삭제.
+            serializer = order_serializer(user_order, many=True)
+            cache.get(f"{request.user.username}_order", serializer.data)
             return Response(status=status.HTTP_200_OK )
-        else:
-            return Response('주문할 상품이 없습니다. 주문내역을 확인해주세요.', status=status.HTTP_400_BAD_REQUEST)
+
+        return Response('주문할 상품이 없습니다. 주문내역을 확인해주세요.', status=status.HTTP_400_BAD_REQUEST)
