@@ -1,5 +1,3 @@
-import django_filters.rest_framework
-
 from order.models import basket as basket_model, order, order_detail
 from restaurant.models import product
 from rest_framework import viewsets
@@ -92,6 +90,7 @@ class order_view(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.Ge
             serialize = order_serializer(user_order)
             if cache.has_key(f"{request.user.username}_order"):
                 user_exist_order = cache.get(f"{request.user.username}_order")
+
                 user_exist_order.append(serialize.data)
                 cache.set(f"{request.user.username}_order", user_exist_order)
             else:
