@@ -82,6 +82,7 @@ class order_view(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.Ge
         bulk_order = []
         product_list = product.objects.filter(product_id__in=product_id)
 
+
         if product_list:
             for order_product, order_count in zip(product_list, product_count): # 실질적인 쿼리셋이 도는 구간
                 bulk_order.append(order_detail(order_id=user_order, product_id=order_product, count=order_count))

@@ -17,6 +17,6 @@ class order(models.Model):
 
 class order_detail(models.Model):
     order_detail_id = models.AutoField(primary_key=True)
-    order_id = models.ForeignKey(order, on_delete=models.CASCADE)
-    product_id = models.ForeignKey(product, on_delete=models.PROTECT)
+    order_id = models.ForeignKey(order, on_delete=models.CASCADE, db_column="order_id")
+    product_id = models.ForeignKey(product, on_delete=models.PROTECT, db_column="product_id")
     count = models.IntegerField()

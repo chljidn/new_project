@@ -64,7 +64,7 @@ DATABASES = {
         "HOST": "127.0.0.1",
         "PORT": "3306",
         "TEST": {"NAME" : "testDB"},
-        "ATOMIC_REQUESTS": True
+        # "ATOMIC_REQUESTS": True
     }
 }
 
