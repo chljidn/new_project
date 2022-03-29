@@ -14,7 +14,9 @@
 - AWS(EC2)
 - Gunicorn
 - Docker
+- Redis
 
 # 이슈 및 해결방법
 - 유저모델을 2개로 나누어야 할 경우 어떻게 구성해야 하는가?
+- redis를 어떻게 적용할 것인가(django-redis, django.core.cache.backends.redis...)
 
