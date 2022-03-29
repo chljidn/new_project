@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_jenkins',
     'django_filters',
+    'django_redis',
 ]
 
 JENKINS_TASKS = (
@@ -146,4 +147,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "authentication.User"
 
-# KAKAO_KEY = os.getenv('KAKAO_API_KEY')
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        # 'BACKEND' : 'django_redis.cache.RedisCache',
+        'LOCATION': [
+            'redis://127.0.0.1:6379',
+        ],
+    }
+}

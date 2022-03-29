@@ -77,7 +77,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=timezone.now
     )
 
-    objects= UserManager()
+    objects= UserManager() # default manager
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username' # username을 id로 사용한다.
@@ -99,7 +99,6 @@ class address_model(models.Model):
     x = models.CharField(max_length=30, db_column='x')
     y = models.CharField(max_length=30, db_column='y')
     total_address = models.CharField(max_length=100, db_column='total_address')
-    # detail_address = models.CharField(max_length=50)
 
     class Meta:
         db_table = "address"

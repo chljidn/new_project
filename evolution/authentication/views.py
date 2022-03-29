@@ -7,8 +7,10 @@ from rest_framework import status
 from rest_framework.decorators import action
 from django.contrib.auth import authenticate, login, logout
 from address import address_api
+from django.core.cache import cache
 
 class user_auth(viewsets.ModelViewSet):
+
     queryset = User.objects.all()
     serializer_class = user_serializer
     lookup_field = 'username'

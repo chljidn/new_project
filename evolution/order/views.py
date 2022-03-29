@@ -57,15 +57,17 @@ class basket(viewsets.ModelViewSet):
 # request.data : prediction_time = 현재 시각부터 배달까지 걸리는 예상 시간(분 단위)
 #                product_list = 주문 목록에 들어있는 상품들의 아이디(Pk) 리스트(배열)
 #                               [[pk, count],[pk,count]] 형식
+
 class order_view(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = order.objects.all()
     serializer_class = order_serializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        my_order_filter = self.queryset.filter(user_id=request.user)
-        serializer = order_serializer(my_order_filter, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # my_order_filter = self.queryset.filter(user_id=request.user)
+        # serializer = order_serializer(my_order_filter, many=True)
+        order_data = cache.get(f"{request.user.username}_order")
+        return Response(order_data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         now = timezone.now()
@@ -87,12 +89,13 @@ class order_view(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.Ge
                 bulk_order.append(order_detail(order_id=user_order, product_id=order_product, count=order_count))
 
             user_order.order_detail_set.bulk_create(bulk_order)
-
-            # 주문번호와 해당 주문과 관계된 주문상세목록을 모두 직렬화시킨 후, redis에 저장.
-            # redis의 expire를 걸어놓거나...
-            # 주문이 완료되면 redis에서 먼저 삭제되고, 일정 기간이 지나면 데이터베이스 상에서 삭제.
-            serializer = order_serializer(user_order, many=True)
-            cache.get(f"{request.user.username}_order", serializer.data)
+            serialize = order_serializer(user_order)
+            if cache.has_key(f"{request.user.username}_order"):
+                user_exist_order = cache.get(f"{request.user.username}_order")
+                user_exist_order.append(serialize.data)
+                cache.set(f"{request.user.username}_order", user_exist_order)
+            else:
+                cache.set(f"{request.user.username}_order", [serialize.data])
             return Response(status=status.HTTP_200_OK )
 
         return Response('주문할 상품이 없습니다. 주문내역을 확인해주세요.', status=status.HTTP_400_BAD_REQUEST)

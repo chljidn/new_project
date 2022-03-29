@@ -12,6 +12,7 @@ class basket_serializer(serializers.ModelSerializer):
         fields = ('basket_id', 'username', 'product_id', 'count')
 
 class order_serializer(serializers.ModelSerializer):
+    order_detail_set = serializers.StringRelatedField
     class Meta:
         model = order
         fields = ('order_id', 'order_time', 'prediction_time')
