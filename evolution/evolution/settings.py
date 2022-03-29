@@ -63,7 +63,8 @@ DATABASES = {
         "PASSWORD": "kic12",
         "HOST": "127.0.0.1",
         "PORT": "3306",
-        "TEST": {"NAME" : "testDB"}
+        "TEST": {"NAME" : "testDB"},
+        "ATOMIC_REQUESTS": True
     }
 }
 
@@ -150,7 +151,6 @@ AUTH_USER_MODEL = "authentication.User"
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        # 'BACKEND' : 'django_redis.cache.RedisCache',
         'LOCATION': [
             'redis://127.0.0.1:6379',
         ],
