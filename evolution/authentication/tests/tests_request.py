@@ -1,5 +1,5 @@
 from rest_framework.test import APITestCase, APIClient
-from authentication.models import User
+from authentication.models import User, general_user
 from django.urls import reverse
 import re
 
@@ -7,19 +7,14 @@ import re
 class test_auth_request(APITestCase):
 
     def setUp(self):
-        user = User.objects.create_user(
-            username='setup',
-            password='setup1234',
-            sex='M',
-            birth='1991-01-10',
-            email='setup@setup.com')
+        user = User.objects.create_user(id= 1, username='setup',password='setup1234',birth='1991-01-10',email='setup@setup.com')
+        user_object = general_user.objects.create(user=user)
 
     def test_signup(self):
         url = reverse('authentication:user-list')
         response = self.client.post(url, {
             'username':'test',
             'password':'test1234',
-            'sex':'M',
             'birth':'1991-01-01',
             'email':'test@test.com'
         }, format='json')
@@ -57,6 +52,6 @@ class test_auth_request(APITestCase):
         }, format='json')
         self.assertEqual(response.status_code, 200)
 
-        dt_url = reverse('authentication:user-detail', kwargs={'username':'setup'})
+        dt_url = reverse('authentication:user-detail', kwargs={"pk":1})
         response = self.client.delete(dt_url, {'password':'setup1234'})
         self.assertEqual(response.status_code, 200)

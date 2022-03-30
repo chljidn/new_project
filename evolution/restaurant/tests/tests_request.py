@@ -1,6 +1,7 @@
 from django.test import TestCase
 from rest_framework.test import APITestCase, APIClient
 from authentication.models import User
+from restaurant.models import owner
 from restaurant.models import restaurant
 from django.urls import reverse
 
@@ -13,7 +14,8 @@ class test_restaurant_request(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        owner_object = User.objects.create_user(username='owner', password='owner1111', email='owner@test.ev', birth='1980-01-01', sex='M', is_owner=True, is_general=False)
+        user_object = User.objects.create_user(username='owner', password='owner1111', email='owner@test.ev', birth='1980-01-01')
+        owner_object = owner.objects.create(user=user_object)
         restaurant_object = restaurant.objects.create(restaurant_id=1, restaurant_name='친정집 본점', phone_number='000-0000-0000', category='Franchise', owner_id=owner_object)
 
         # 가맹점주 로그인 셋업

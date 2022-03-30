@@ -11,7 +11,7 @@ class owner(models.Model):
 # 업체
 class restaurant(models.Model):
     restaurant_id = models.AutoField(primary_key=True)
-    owner_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column='owner_id')
+    owner_id = models.ForeignKey(owner, on_delete=models.CASCADE, db_column='owner_id')
     restaurant_name = models.CharField(max_length=100)
     # restaurant_address = models.ForeignKey(restaurant_address, on_delete=models.PROTECT)
     phone_number = models.CharField(max_length=20)

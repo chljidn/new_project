@@ -34,7 +34,7 @@ class basket(viewsets.ModelViewSet):
         if request.user.is_authenticated:
             product_object = product.objects.get(product_id=request.data['product_id'])
             basket_model.objects.create(
-                user_id=request.user,
+                user_id=request.user.general_user,
                 product_id=product_object,
                 count=request.data['count']
             )
