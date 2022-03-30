@@ -1,6 +1,8 @@
 # 배달 서비스 토이 프로젝트
 
-![](https://github.com/chljidn/new_project/blob/master/%EB%B0%B0%EB%8B%AC%EC%84%9C%EB%B9%84%EC%8A%A4.png)
+![서버 아키텍처](https://github.com/chljidn/new_project/blob/master/%EB%B0%B0%EB%8B%AC%EC%84%9C%EB%B9%84%EC%8A%A4.png)
+<P align="center">
+  <img src="https://github.com/chljidn/new_project/blob/master/%EB%B0%B0%EB%8B%AC%EC%84%9C%EB%B9%84%EC%8A%A4.png" />
 
 ## 목표
 - 배달 서비스에 대한 api 기능 구현 및 해당 기능에 맞는 최적화된 솔루션 찾기
