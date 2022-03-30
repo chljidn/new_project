@@ -17,6 +17,6 @@
 - Redis
 
 # 이슈 및 해결방법
-- [유저모델을 2개로 나누어야 할 경우](https://chljidn-django.tistory.com/4?category=931273)
+- [유저모델을 2개로 나누어야 할 경우](https://chljidn-django.tistory.com/5)
 - redis적용
 - [각 요청 별로 두 개의 DB처리를 요할 경우 에러 처리](https://chljidn-django.tistory.com/4)
