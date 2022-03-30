@@ -81,11 +81,10 @@ class user_auth(viewsets.ModelViewSet):
     queryset = general_user.objects.all()
     serializer_class = general_user_serializer
     # lookup_field = 'username'
-    main_user_model = User
     sub_user_model = general_user
 
     def create(self, request, **kwargs):
-        user = self.main_user_model.objects.create_user(
+        user = User.objects.create_user(
             username=request.data['username'],
             email=request.data['email'],
             birth=request.data['birth'],
@@ -134,7 +133,7 @@ class user_auth(viewsets.ModelViewSet):
     # 유저 아이디(username)를 파라미터로 받는다.
     def destroy(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            user_object = self.main_user_model.objects.get(username=request.user)
+            user_object = User.objects.get(username=request.user)
             if check_password(request.data['password'], user_object.password):
                 logout(request)
                 self.perform_destroy(user_object)

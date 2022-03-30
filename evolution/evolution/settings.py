@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'authentication.apps.AuthenticationConfig',
     'order.apps.OrderConfig',
     'restaurant.apps.RestaurantConfig',
+    'riders.apps.RidersConfig',
     'rest_framework',
     'django_extensions',
     'django_jenkins',
