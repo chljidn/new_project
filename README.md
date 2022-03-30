@@ -20,3 +20,4 @@
 - [유저모델을 2개로 나누어야 할 경우](https://chljidn-django.tistory.com/5)
 - redis적용
 - [각 요청 별로 두 개의 DB처리를 요할 경우 에러 처리](https://chljidn-django.tistory.com/4)
+- 테스트 및 빌드 자동화
