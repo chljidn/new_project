@@ -9,7 +9,6 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from datetime import timedelta
-from rest_framework.filters import BaseFilterBackend
 from rest_framework import mixins
 import json
 from django.core.cache import cache
@@ -91,7 +90,6 @@ class order_view(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.Ge
             serialize = order_serializer(user_order)
             if cache.has_key(f"{request.user.username}_order"):
                 user_exist_order = cache.get(f"{request.user.username}_order")
-
                 user_exist_order.append(serialize.data)
                 cache.set(f"{request.user.username}_order", user_exist_order)
             else:

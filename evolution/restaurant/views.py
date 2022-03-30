@@ -8,22 +8,11 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django_filters.rest_framework import backends
 from restaurant.filters import restaurant_filter
 from authentication.views import user_auth, User, user_serializer
+from restaurant.models import owner
 
 # 유저 view를 상속하여 create만 재정의
 class owner_auth_view(user_auth):
-
-    def create(self, request):
-        user = User.objects.create_user(
-            username=request.data['username'],
-            email=request.data['email'],
-            birth=request.data['birth'],
-            sex=request.data['sex'],
-            password=request.data['password'],
-            is_owner=True,
-            is_general=False
-        )
-        serializer = user_serializer(user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    sub_user_model = owner
 
 # 리스틑, 등록, 업데이트, 삭제 모두 필요하므로 일단 viewset
 # 단, 업데이트와 삭제의 경우, 클라이언트의 요청이 아닌 서부 내부의 스태프만 처리할 수 있어야 하므로

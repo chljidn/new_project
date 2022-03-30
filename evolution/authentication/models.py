@@ -7,7 +7,7 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils import timezone
 
 class UserManager(BaseUserManager):
-    def _create_user(self, username, email, birth, sex, password, **extra_fields):
+    def _create_user(self, username, email, birth, password, **extra_fields):
         if not email:
             raise ValueError('이메일 주소는 필수로 입력되어야 합니다.')
         GlobalUserModel = apps.get_model(self.model._meta.app_label, self.model._meta.object_name)
@@ -15,7 +15,6 @@ class UserManager(BaseUserManager):
             email=self.normalize_email(email), # 이메일의 도메인 부분을 소문자로 처리한다(BaseUserManager에 정의된 함수)
             username = username,
             birth=birth,
-            sex=sex,
             **extra_fields
         )
         user.set_password(password)
@@ -23,17 +22,17 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def create_user(self, username, email=None, birth=None, sex=None, password=None, **extra_fields):
+    def create_user(self, username, email=None, birth=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
-        return self._create_user(username, email, birth, sex, password, **extra_fields)
+        return self._create_user(username, email, birth, password, **extra_fields)
 
 
-    def create_superuser(self, username, email, birth, sex, password=None, **extra_fields):
+    def create_superuser(self, username, email, birth, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
-        return self._create_user(username, email, birth, sex, password, **extra_fields)
+        return self._create_user(username, email, birth, password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
@@ -61,11 +60,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=50,
     )
 
-    sex = models.CharField(
-        max_length=10,
-    )
-    is_general = models.BooleanField(default=True)
-    is_owner = models.BooleanField(default=False)
+    # is_general = models.BooleanField(default=True)
+    # is_owner = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=True)
@@ -81,7 +77,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username' # username을 id로 사용한다.
-    REQUIRED_FIELDS = ['email','birth', 'sex']
+    REQUIRED_FIELDS = ['email','birth']
 
     class Meta:
         verbose_name = _('user')
@@ -93,6 +89,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
     get_full_name.short_description = _('Full name')
+
+class general_user(models.Model):
+    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE, db_column="user")
 
 class address_model(models.Model):
     address_id = models.AutoField(primary_key=True, db_column='address_id')

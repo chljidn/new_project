@@ -1,6 +1,9 @@
 from django.db import models
 from authentication.models import User
 
+class owner(models.Model):
+    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE, db_column="user")
+
 
 # 업체 주소
 # class restaurant_address(models.Model):

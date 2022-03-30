@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from authentication.models import User, address_model
+from authentication.models import User, address_model, general_user
 from authentication.serializers import user_serializer
 from django.contrib.auth.hashers import check_password
 from rest_framework.response import Response
@@ -14,6 +14,7 @@ class user_auth(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = user_serializer
     lookup_field = 'username'
+    sub_user_model = general_user
 
     def create(self, request, **kwargs):
 
@@ -21,9 +22,9 @@ class user_auth(viewsets.ModelViewSet):
             username=request.data['username'],
             email=request.data['email'],
             birth=request.data['birth'],
-            sex=request.data['sex'],
             password=request.data['password'],
         )
+        self.sub_user_model.objects.create(user=user)
         if request.data.get('address', False):
             address_api(request.data['address'])
 
