@@ -30,4 +30,5 @@
 - [유저모델을 2개로 나누어야 할 경우](https://chljidn-django.tistory.com/5)
 - redis적용
 - [각 요청 별로 두 개의 DB처리를 요할 경우 에러 처리](https://chljidn-django.tistory.com/4)
-- 테스트 및 빌드 자동화
+- 테스트 및 빌드 자동화(거의 완성, 블로그는 추후 추가 예정)
+- 중복 처리 및 데이터의 고립화가 중요할 경우는 어떻게 처리해야 
