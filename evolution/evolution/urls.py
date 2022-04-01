@@ -19,5 +19,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('authentication.urls')),
     path('order/', include('order.urls')),
-    path('restaurant/', include('restaurant.urls'))
+    path('restaurant/', include('restaurant.urls')),
+    path('riders/', include('riders.urls'))
 ]

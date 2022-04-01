@@ -5,8 +5,6 @@ from restaurant.serializers import owner_serializer, restaurant_serializer
 from rest_framework.response import Response
 from django.contrib.auth import login, logout, authenticate
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from django_filters.rest_framework import backends
-from restaurant.filters import restaurant_filter
 from authentication.views import user_auth, User, user_serializer
 
 # 유저 view를 상속하여 create만 재정의
@@ -15,15 +13,10 @@ class owner_auth_view(user_auth):
     sub_user_model = owner
     serializer_class = owner_serializer
 
-# 리스틑, 등록, 업데이트, 삭제 모두 필요하므로 일단 viewset
-# 단, 업데이트와 삭제의 경우, 클라이언트의 요청이 아닌 서부 내부의 스태프만 처리할 수 있어야 하므로
-# 따로 분리 가능성 있음.
+
 class restaurant_view(viewsets.ModelViewSet):
     queryset = restaurant.objects.all()
     serializer_class = restaurant_serializer
-    filter_backends = (backends.DjangoFilterBackend,)
-    filterset_class = restaurant_filter
-
     def get_permissions(self):
         if self.action in ('create', 'update', 'partial_update', 'delete'):
             permission_classes = [IsAuthenticated]
@@ -31,8 +24,13 @@ class restaurant_view(viewsets.ModelViewSet):
             permission_classes = []
         return [permission() for permission in permission_classes]
 
+    def list(self, request, *args, **kwargs):
+        parameters = {i:request.query_params[i] for i in request.query_params}
+        restaurant_list = self.queryset.filter(**parameters)
+        serializer = self.serializer_class(restaurant_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def create(self, request):
-        # if owner.objects.filter(user=request.user):
         if request.user.owner:
             self.queryset.create(
                 owner_id=request.user.owner,

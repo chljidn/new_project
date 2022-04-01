@@ -90,14 +90,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     get_full_name.short_description = _('Full name')
 
-class general_user(models.Model):
-    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE, db_column="user")
-
 class address_model(models.Model):
     address_id = models.AutoField(primary_key=True, db_column='address_id')
     x = models.CharField(max_length=30, db_column='x')
     y = models.CharField(max_length=30, db_column='y')
-    total_address = models.CharField(max_length=100, db_column='total_address')
+    address_string = models.CharField(max_length=100, db_column='total_address')
 
     class Meta:
         db_table = "address"
+
+class general_user(models.Model):
+    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE, db_column="user")
+    main_address = models.ForeignKey(address_model, on_delete=models.PROTECT, default="", db_column="main_address")
+    sub_address = models.CharField(max_length=30, default="")

@@ -60,6 +60,7 @@ class order_view(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.Ge
     serializer_class = order_serializer
     permission_classes = [IsAuthenticated]
 
+    # 라이더의 현재 위치 추가 요망.
     def get(self, request, *args, **kwargs):
         # my_order_filter = self.queryset.filter(user_id=request.user)
         # serializer = order_serializer(my_order_filter, many=True)
@@ -69,7 +70,7 @@ class order_view(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.Ge
     def post(self, request, *args, **kwargs):
         now = timezone.now()
         user_order = order.objects.create(
-            user_id = request.user,
+            user_id = request.user.general_user,
             order_time=now,
             prediction_time=now+timedelta(minutes=int(request.data['prediction_time']))
         )

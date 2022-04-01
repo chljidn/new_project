@@ -6,4 +6,4 @@ class rider_order_serializer(serializers.ModelSerializer):
     order = order_serializer(read_only=True, many=True)
     class Meta:
         model = rider_order
-        fields = ("order", )
+        fields = ("user", 'order')
