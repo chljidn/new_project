@@ -18,7 +18,7 @@ class restaurant_view(viewsets.ModelViewSet):
     queryset = restaurant.objects.all()
     serializer_class = restaurant_serializer
     def get_permissions(self):
-        if self.action in ('create', 'update', 'partial_update', 'delete'):
+        if self.action in ('create', 'update', 'partial_update', 'destroy'):
             permission_classes = [IsAuthenticated]
         else:
             permission_classes = []

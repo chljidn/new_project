@@ -28,7 +28,7 @@ class delivery(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
     serializer_class = rider_order_serializer
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, pk):
+    def get(self, request):
         order_list = self.queryset.filter(rider_id=request.user)
         if order_list:
             serializer = self.serializer_class(order_list, many=True)
@@ -36,7 +36,7 @@ class delivery(mixins.CreateModelMixin, mixins.RetrieveModelMixin,
 
 
     # Post data : order 객체(혹은 order 번호), rider 객체
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         if rider.objects.filter(user=request.user):
             order_object = order.objects.get(order_id=request.data['order'])
             # if not cache.haskey(f"{order_object.order_id}"):

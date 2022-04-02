@@ -53,8 +53,8 @@ class test_basket_request(APITestCase):
         self.assertEqual(response.status_code, 204)
 
 class test_order_request(APITestCase):
+
     def test_order_get(self):
         pass
-
     def test_order_post(self):
         pass

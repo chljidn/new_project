@@ -61,13 +61,13 @@ class order_view(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.Ge
     permission_classes = [IsAuthenticated]
 
     # 라이더의 현재 위치 추가 요망.
-    def get(self, request, *args, **kwargs):
+    def get(self, request, pk):
         # my_order_filter = self.queryset.filter(user_id=request.user)
         # serializer = order_serializer(my_order_filter, many=True)
         order_data = cache.get(f"{request.user.username}_order")
         return Response(order_data, status=status.HTTP_200_OK)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         now = timezone.now()
         user_order = order.objects.create(
             user_id = request.user.general_user,
