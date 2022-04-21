@@ -22,6 +22,9 @@
   <img src="https://github.com/chljidn/new_project/blob/master/%EB%B0%B0%EB%8B%AC%EC%84%9C%EB%B9%84%EC%8A%A4.png" />
 </p>
 
+ - 도커 허브에 이미지 푸쉬까지의 자동화 과정과 배포 서버 구축까지 완성된 상태
+ - 배포 서버로 자동 배포는 현재 진행중이며, 수정될 예정
+
 ## ERD 
 ![](https://github.com/chljidn/new_project/blob/master/ev_erd.png)
 
